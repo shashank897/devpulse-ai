@@ -107,7 +107,7 @@ def run_scan(scan_id, data):
 def health(): return {'status':'ok','version':'0.1.0'}
 @app.get('/api/v1/capabilities')
 def capabilities():
-    return {'static_analysis':True,'github_public':True,'github_app':False,'ai':bool(os.getenv('OPENROUTER_API_KEY')),'ml':bool(os.getenv('MODEL_PATH')),'storage':'PostgreSQL' if url.startswith('postgres') else 'Ephemeral preview storage','limits':{'files':20,'bytes_per_file':100000,'scans_per_hour':20}}
+    return {'static_analysis':True,'github_public':True,'github_import':'public_snapshot','github_notebooks':True,'github_app':False,'ai':bool(os.getenv('OPENROUTER_API_KEY')),'ml':bool(os.getenv('MODEL_PATH')),'storage':'PostgreSQL' if url.startswith('postgres') else 'Ephemeral preview storage','limits':{'files':20,'bytes_per_file':100000,'archive_bytes':8000000,'notebook_bytes':2000000,'scans_per_hour':20}}
 @app.get('/api/v1/scans')
 def list_scans(request: Request):
     with Session() as db: return [serialized(r) for r in db.scalars(select(Scan).where(Scan.owner==request.state.owner).order_by(Scan.created_at.desc()).limit(50))]

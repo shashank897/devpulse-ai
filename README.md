@@ -9,7 +9,7 @@ A working engineering-intelligence preview built with Next.js, React, TypeScript
 - Responsive landing page with an interactive, explicitly labeled SQL-injection example.
 - Browser-session workspace with code snippets and public GitHub repository scans.
 - Python AST rules; selected JavaScript/TypeScript and C/C++ patterns.
-- Commit-pinned GitHub snapshots with bounded file, byte, and request limits.
+- Commit-pinned public GitHub snapshots without REST API quota usage, including Python notebook code cells, with bounded file and byte limits.
 - Source evidence, remediation, severity filters, triage, file metrics, and scan history.
 - JSON and SARIF report exports; session-owned data deletion.
 - Opt-in, server-side OpenRouter free-model explanations with rule-guidance fallback.
