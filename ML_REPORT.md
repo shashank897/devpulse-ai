@@ -25,3 +25,24 @@ The static analyzer's risk score is a rule-weighted indicator and is never prese
 Suggested source: [Microsoft CodeXGLUE defect detection](https://github.com/microsoft/CodeXGLUE/tree/main/Code-Code/Defect-detection), derived from Devign. The upstream task describes C/C++ vulnerable-function classification. The [CodeXGLUE repository](https://github.com/microsoft/CodeXGLUE) specifies C-UDA for datasets. Review upstream and source-project obligations before redistribution. No dataset is bundled here.
 
 Remaining: near-duplicate detection, independently curated validation, calibrated probability evaluation, CodeBERT fine-tuning/comparison, and reproducibility across pinned research environments. The transformer is deliberately not replaced with fictitious scores or random predictions.
+
+## Retraining experiment (2026-10-31)
+
+Completed six logistic-regression configurations: character TF-IDF alone or combined with case-sensitive code-token TF-IDF, with regularization C = 0.1, 1 or 10. Settings were selected using 2,471 FFmpeg validation functions from 1,471 commits, disjoint from the 7,195 inner-training functions and 4,410 commits. The selected model was refitted on all 9,666 FFmpeg functions and evaluated once on the same historical 17,497-function QEMU test project.
+
+Validation PR-AUC selected the character model with C = 0.1. Its threshold 0.4804684359 maximized validation balanced accuracy. An initial validation-only threshold trial using F1 was stopped before test evaluation because it classified almost all validation functions as positive. Neither configuration nor threshold was selected using the new QEMU results. The historical baseline QEMU results were already known, so this is a development comparison rather than an independent new benchmark.
+
+| Metric | Deployed baseline | New candidate | Change (percentage points) |
+| --- | ---: | ---: | ---: |
+| Accuracy | 56.61% | 54.46% | -2.15 |
+| Precision | 48.57% | 46.18% | -2.39 |
+| Recall | 31.84% | 41.91% | +10.06 |
+| F1 | 38.47% | 43.94% | +5.47 |
+| ROC-AUC | 0.5481 | 0.5384 | -0.97 |
+| PR-AUC (average precision) | 0.4724 | 0.4552 | -1.72 |
+
+**The goal of improving all six quality metrics was not achieved.** The candidate finds more labeled defects but produces more false alarms and has weaker ranking discrimination. Its confusion matrix is TN 6,405, FP 3,640, FN 4,329, TP 3,123. The candidate was not promoted; the deployed baseline remains the active model.
+
+The candidate artifact is saved locally as `artifacts/experiment-v2/candidate.joblib` (2,113,451 bytes). Measured inference took 1.9669 ms/function, approximately 508 functions/second; this is an uncontrolled local timing and does not establish a speed improvement over the earlier run. Scores remain uncalibrated. The API now reads an artifact's threshold metadata, with 0.5 as the legacy default; 18 backend tests passed, including checks for threshold handling and baseline inference.
+
+Reproduce using `python ml/train_improved.py`; the source dataset files must be present. Input parquet checksums, package versions, every validation result and final test metrics are recorded in [ml/experiments/devign-v2.json](ml/experiments/devign-v2.json). See [DATASETS.md](DATASETS.md) for verified dataset sources and downloads. The current dataset is already available locally. PrimeVul is a candidate for broader future training with chronological evaluation; it was not downloaded or used in this experiment. Transformer training has not been performed.

@@ -1,0 +1,281 @@
+{
+  "date": "2026-10-31",
+  "selection": {
+    "seed": 42,
+    "train_project": "FFmpeg",
+    "test_project": "qemu",
+    "inner_samples": 7195,
+    "validation_samples": 2471,
+    "inner_commits": 4410,
+    "validation_commits": 1471,
+    "selection_rule": "validation PR-AUC, then validation F1; threshold maximizes validation balanced accuracy",
+    "parquet_sha256": {
+      "train": "e319c83e2e816a10aeeebe78668aa95b757b04e555700bf5f826766b0e80bb06",
+      "validation": "a17a76ed040d7f8657d1ff741f967b44704c008101ac958e2990ad468203cfa4",
+      "test": "259c944eb4f8689e83895de476a00fe4cadf4839636769e725d3744fc36cfcd5"
+    },
+    "candidates": [
+      {
+        "features": "char",
+        "c": 0.1,
+        "threshold": 0.4804684358989078,
+        "validation": {
+          "accuracy": 0.5596924322136787,
+          "precision": 0.5659928656361475,
+          "recall": 0.7267175572519083,
+          "f1": 0.6363636363636364,
+          "roc_auc": 0.5670335522812001,
+          "pr_auc": 0.589370103122308,
+          "confusion_matrix": [
+            [
+              431,
+              730
+            ],
+            [
+              358,
+              952
+            ]
+          ]
+        }
+      },
+      {
+        "features": "char",
+        "c": 1.0,
+        "threshold": 0.5972072476898532,
+        "validation": {
+          "accuracy": 0.5277215702144881,
+          "precision": 0.6144,
+          "recall": 0.2931297709923664,
+          "f1": 0.39689922480620154,
+          "roc_auc": 0.5528492810225458,
+          "pr_auc": 0.5845412218162243,
+          "confusion_matrix": [
+            [
+              920,
+              241
+            ],
+            [
+              926,
+              384
+            ]
+          ]
+        }
+      },
+      {
+        "features": "char",
+        "c": 10.0,
+        "threshold": 0.7445476233156746,
+        "validation": {
+          "accuracy": 0.5131525698097936,
+          "precision": 0.6019047619047619,
+          "recall": 0.24122137404580152,
+          "f1": 0.3444141689373297,
+          "roc_auc": 0.5246326212596406,
+          "pr_auc": 0.567036804051941,
+          "confusion_matrix": [
+            [
+              952,
+              209
+            ],
+            [
+              994,
+              316
+            ]
+          ]
+        }
+      },
+      {
+        "features": "char_tokens",
+        "c": 0.1,
+        "threshold": 0.46612696952507715,
+        "validation": {
+          "accuracy": 0.5532173209227034,
+          "precision": 0.5567805953693495,
+          "recall": 0.7709923664122137,
+          "f1": 0.646606914212548,
+          "roc_auc": 0.5499746862075994,
+          "pr_auc": 0.5764985980762739,
+          "confusion_matrix": [
+            [
+              357,
+              804
+            ],
+            [
+              300,
+              1010
+            ]
+          ]
+        }
+      },
+      {
+        "features": "char_tokens",
+        "c": 1.0,
+        "threshold": 0.6393293267028669,
+        "validation": {
+          "accuracy": 0.5058680696074463,
+          "precision": 0.5801801801801801,
+          "recall": 0.24580152671755726,
+          "f1": 0.3453083109919571,
+          "roc_auc": 0.5297302272981308,
+          "pr_auc": 0.5635722220854813,
+          "confusion_matrix": [
+            [
+              928,
+              233
+            ],
+            [
+              988,
+              322
+            ]
+          ]
+        }
+      },
+      {
+        "features": "char_tokens",
+        "c": 10.0,
+        "threshold": 0.08595823365984569,
+        "validation": {
+          "accuracy": 0.5491703763658438,
+          "precision": 0.542314335060449,
+          "recall": 0.9587786259541985,
+          "f1": 0.6927744070601214,
+          "roc_auc": 0.5042375945979709,
+          "pr_auc": 0.5452595190174692,
+          "confusion_matrix": [
+            [
+              101,
+              1060
+            ],
+            [
+              54,
+              1256
+            ]
+          ]
+        }
+      }
+    ],
+    "selected": {
+      "features": "char",
+      "c": 0.1,
+      "threshold": 0.4804684358989078,
+      "validation": {
+        "accuracy": 0.5596924322136787,
+        "precision": 0.5659928656361475,
+        "recall": 0.7267175572519083,
+        "f1": 0.6363636363636364,
+        "roc_auc": 0.5670335522812001,
+        "pr_auc": 0.589370103122308,
+        "confusion_matrix": [
+          [
+            431,
+            730
+          ],
+          [
+            358,
+            952
+          ]
+        ]
+      }
+    },
+    "environment": {
+      "python": "3.14.0",
+      "packages": {
+        "scikit-learn": "1.9.1",
+        "numpy": "2.5.4",
+        "joblib": "1.6.0",
+        "pyarrow": "26.0.0"
+      }
+    }
+  },
+  "test": {
+    "model": "devpulse-defect-candidate",
+    "version": "2.0.0",
+    "languages": [
+      "c",
+      "cpp"
+    ],
+    "seed": 42,
+    "train_projects": [
+      "FFmpeg"
+    ],
+    "test_projects": [
+      "qemu"
+    ],
+    "train_samples": 9666,
+    "test_samples": 17497,
+    "calibrated": false,
+    "threshold": 0.4804684358989078,
+    "selected_features": "char",
+    "selected_c": 0.1,
+    "accuracy": 0.5445504943704635,
+    "precision": 0.46177731775839126,
+    "recall": 0.4190821256038647,
+    "f1": 0.4393950052761168,
+    "roc_auc": 0.5383893052920473,
+    "pr_auc": 0.4552072424723659,
+    "confusion_matrix": [
+      [
+        6405,
+        3640
+      ],
+      [
+        4329,
+        3123
+      ]
+    ],
+    "ms_per_function": 1.9668794764816722,
+    "functions_per_second": 508.4195610138689,
+    "baseline_delta": {
+      "accuracy": -0.021546550837286405,
+      "precision": -0.0238960346771388,
+      "recall": 0.10064412238325277,
+      "f1": 0.054729743483281634,
+      "roc_auc": -0.009663933127549762,
+      "pr_auc": -0.017183696618374267
+    },
+    "all_quality_metrics_improved": false,
+    "artifact_bytes": 2113451
+  },
+  "baseline": {
+    "model": "devpulse-defect-baseline",
+    "version": "1.0.0",
+    "languages": [
+      "c",
+      "cpp"
+    ],
+    "seed": 42,
+    "train_projects": [
+      "FFmpeg"
+    ],
+    "test_projects": [
+      "qemu"
+    ],
+    "train_samples": 9666,
+    "test_samples": 17497,
+    "exact_duplicates_removed": 155,
+    "ambiguous_duplicate_groups_dropped": 76,
+    "accuracy": 0.56609704520775,
+    "precision": 0.48567335243553006,
+    "recall": 0.31843800322061194,
+    "f1": 0.38466526179283517,
+    "roc_auc": 0.5480532384195971,
+    "pr_auc": 0.47239093909074015,
+    "confusion_matrix": [
+      [
+        7532,
+        2513
+      ],
+      [
+        5079,
+        2373
+      ]
+    ],
+    "ms_per_function": 2.120812962222091,
+    "functions_per_second": 471.51729917391947,
+    "calibrated": false,
+    "threshold": 0.5,
+    "dataset_sha256": "8e4f0c64784d38e4c39eb731d11a8e297669c4175d17146f2e507bd56194485c",
+    "artifact_bytes": 2113511
+  },
+  "promotion": "rejected: four of six quality metrics regressed"
+}
