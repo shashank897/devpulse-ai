@@ -4,7 +4,10 @@ from sqlalchemy.schema import CreateSchema
 from sqlalchemy.engine import make_url
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, sessionmaker
 
-url = os.getenv('DATABASE_URL', 'sqlite:///./devpulse.db').replace('postgres://', 'postgresql+psycopg://', 1)
+raw_url = os.getenv('DATABASE_URL', 'sqlite:///./devpulse.db').strip()
+if len(raw_url) > 1 and raw_url[0] in ('"', "'") and raw_url[-1] == raw_url[0]:
+    raw_url = raw_url[1:-1].strip()
+url = raw_url.replace('postgres://', 'postgresql+psycopg://', 1)
 if url.startswith('postgresql://'): url = url.replace('postgresql://', 'postgresql+psycopg://', 1)
 is_postgres = url.startswith('postgresql')
 connection_url = make_url(url)

@@ -10,7 +10,13 @@ from sqlalchemy.schema import CreateSchema
 from backend import db, main
 
 
-def test_postgres_schema_and_connection_budget():
+@pytest.mark.parametrize('database_url', [
+    'postgres://test:test@example.oregon-postgres.render.com/test',
+    '  postgresql://test:test@example.oregon-postgres.render.com/test\n',
+    "'postgresql://test:test@example.oregon-postgres.render.com/test'",
+    '"postgres://test:test@example.oregon-postgres.render.com/test"',
+])
+def test_postgres_schema_and_connection_budget(database_url):
     # Import in a separate process so the API tests keep their SQLite database.
     script = '''
 from backend import db
@@ -24,7 +30,7 @@ assert db.engine.pool._max_overflow == 1
 assert db.engine.url.drivername == 'postgresql+psycopg'
 assert db.engine.url.query['sslmode'] == 'require'
 '''
-    env = dict(os.environ, DATABASE_URL='postgres://test:test@example.oregon-postgres.render.com/test')
+    env = dict(os.environ, DATABASE_URL=database_url)
     result = subprocess.run([sys.executable, '-c', script], env=env, capture_output=True, text=True)
     assert result.returncode == 0, result.stderr
 
