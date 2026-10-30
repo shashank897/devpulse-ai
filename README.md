@@ -56,6 +56,10 @@ Never commit `.env`, credentials, or downloaded datasets. The small trained base
 
 Deploy this repository as a Docker web service using `Dockerfile`, with `ENVIRONMENT=production`. The frontend and API run in one container. The free preview uses ephemeral SQLite: history disappears on restart/redeploy/sleep. Supply a managed PostgreSQL `DATABASE_URL` for durable data. The container listens on `$PORT` and exposes `/api/v1/health`.
 
+To share CareerLens AI's PostgreSQL instance, set DevPulse's `DATABASE_URL` privately in Render. DevPulse creates only its `devpulse.scans` table and index in a separate `devpulse` schema; CareerLens keeps its existing public tables. PostgreSQL credentials must allow creating that schema. The connection pool uses two persistent connections and one temporary overflow connection per process. The health endpoint checks database connectivity and returns the database type without connection details. Both apps share the instance's capacity, availability and retention period.
+
+The current database is in Oregon and DevPulse is in Singapore, so DevPulse requires the external database URL with `sslmode=require`. CareerLens can keep its same-region internal connection. Same-region apps should prefer an internal URL. Never commit either URL. This setup does not copy earlier ephemeral SQLite history; export any reports you need before changing storage.
+
 ## Honest scope
 
 The experimental C/C++ defect classifier is trained on CodeXGLUE/Devign and packaged with the Render image. It scored ROC-AUC 0.548 on its held-out QEMU project, indicating weak discrimination. It is not a reliable security detector; see ML_REPORT.md. This is not the complete enterprise platform described in the long-form brief. Private GitHub App installations/OAuth, webhooks and check runs, distributed Celery workers, dependency advisory scanning, transformer fine-tuning, and advanced commit comparison are not implemented. The UI explicitly labels unavailable capabilities. No model accuracy, test coverage, scan metrics, or successful integrations are fabricated.

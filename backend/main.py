@@ -15,9 +15,10 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
-from sqlalchemy import select, delete, update
+from sqlalchemy import select, delete, update, text
+from sqlalchemy.exc import SQLAlchemyError
 from .analyzer import analyze, sarif
-from .db import Base, engine, Session, Scan, url
+from .db import engine, Session, Scan, url, initialize_database
 from .github import repository_files
 
 executor = ThreadPoolExecutor(max_workers=1)
@@ -26,7 +27,7 @@ rates: dict[str, list[float]] = {}
 rate_lock = threading.Lock()
 @asynccontextmanager
 async def lifespan(app):
-    Base.metadata.create_all(engine)
+    initialize_database()
     with Session.begin() as db:
         db.execute(update(Scan).where(Scan.status.in_(['queued','running'])).values(status='failed', payload=json.dumps({'error':'The server restarted during this scan. Please retry.'})))
     yield
@@ -104,7 +105,13 @@ def run_scan(scan_id, data):
     finally: capacity.release()
 
 @app.get('/api/v1/health')
-def health(): return {'status':'ok','version':'0.1.0'}
+def health():
+    try:
+        with engine.connect() as connection:
+            connection.execute(text('SELECT 1'))
+    except SQLAlchemyError:
+        raise HTTPException(503, 'Database is temporarily unavailable.')
+    return {'status':'ok','version':'0.1.0','database':'postgresql' if url.startswith('postgresql') else 'sqlite'}
 @app.get('/api/v1/capabilities')
 def capabilities():
     return {'static_analysis':True,'github_public':True,'github_import':'public_snapshot','github_notebooks':True,'github_app':False,'ai':bool(os.getenv('OPENROUTER_API_KEY')),'ml':bool(os.getenv('MODEL_PATH')),'storage':'PostgreSQL' if url.startswith('postgres') else 'Ephemeral preview storage','limits':{'files':20,'bytes_per_file':100000,'archive_bytes':8000000,'notebook_bytes':2000000,'scans_per_hour':20}}
