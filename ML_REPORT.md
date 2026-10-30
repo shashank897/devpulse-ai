@@ -18,7 +18,7 @@ Trained locally on the C-UDA CodeXGLUE/Devign parquet dataset (27,318 input func
 | Inference throughput | 471.5 functions/second on the training machine |
 | Artifact | 2,113,511 bytes |
 
-These results indicate weak discrimination across the held-out project. The model is a reproducible research baseline, **not a reliable security detector** and should not drive release decisions. Probabilities are uncalibrated; threshold 0.5 was fixed in advance. No threshold or hyperparameter was selected against the test result. There are only two projects, so uncertainty and generalization are substantial. The artifact remains local in ignored `artifacts/`; it is not deployed to Render.
+These results indicate weak discrimination across the held-out project. The model is a reproducible research baseline, **not a reliable security detector** and should not drive release decisions. Probabilities are uncalibrated; threshold 0.5 was fixed in advance. No threshold or hyperparameter was selected against the test result. There are only two projects, so uncertainty and generalization are substantial. The trained artifact is packaged with the Render image for an explicit experimental inference panel. The dataset itself is not deployed.
 
 The static analyzer's risk score is a rule-weighted indicator and is never presented as ML output.
 

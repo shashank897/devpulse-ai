@@ -32,3 +32,18 @@ def test_scan_session_triage_exports_and_deletion():
         assert client.post('/api/v1/scans',json={'code':''}).status_code==422
         assert client.delete('/api/v1/scans').status_code==200
         assert client.get('/api/v1/scans').json()==[]
+
+def test_trained_ml_endpoint(monkeypatch):
+    from pathlib import Path
+    from backend.ml import load_model
+    load_model.cache_clear()
+    monkeypatch.setenv('MODEL_PATH',str(Path('artifacts/baseline.joblib').resolve()))
+    with TestClient(app) as client:
+        result=client.post('/api/v1/ml/predict',json={'language':'c','code':'int f(char *p) { return p[0]; }'})
+        assert result.status_code==200
+        body=result.json()
+        assert body['model_name']=='devpulse-defect-baseline'
+        assert body['calibrated_probability'] is None
+        assert body['prediction'] in ('low_defect_signal','elevated_defect_signal')
+        assert client.post('/api/v1/ml/predict',json={'language':'python','code':'print(1)'}).status_code==422
+    load_model.cache_clear()

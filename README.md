@@ -47,10 +47,10 @@ python -m pytest tests -q
 | `ENVIRONMENT=production` | Secure session cookies for HTTPS |
 | `OPENROUTER_API_KEY` | Optional server-only API key |
 | `OPENROUTER_MODEL` | `openrouter/free` or a `:free` model only |
-| `MODEL_PATH` | Trusted baseline artifact; requires ML dependencies |
+| `MODEL_PATH` | Trusted baseline artifact; the Render image includes the trained baseline |
 | `PORT` | Container HTTP port; defaults to 10000 |
 
-Never commit `.env`, credentials, downloaded datasets, or model artifacts. The GitHub connection used to publish this repository is **not** an application credential and is not embedded in the app.
+Never commit `.env`, credentials, or downloaded datasets. The small trained baseline artifact is packaged with the app image. The GitHub connection used to publish this repository is **not** an application credential and is not embedded in the app.
 
 ## Render
 
@@ -58,6 +58,6 @@ Deploy this repository as a Docker web service using `Dockerfile`, with `ENVIRON
 
 ## Honest scope
 
-This is not the complete enterprise platform described in the long-form brief. Private GitHub App installations/OAuth, webhooks and check runs, distributed Celery workers, dependency advisory scanning, transformer fine-tuning, and advanced commit comparison are not implemented. The UI explicitly labels unavailable capabilities. No model accuracy, test coverage, scan metrics, or successful integrations are fabricated.
+The experimental C/C++ defect classifier is trained on CodeXGLUE/Devign and packaged with the Render image. It scored ROC-AUC 0.548 on its held-out QEMU project, indicating weak discrimination. It is not a reliable security detector; see ML_REPORT.md. This is not the complete enterprise platform described in the long-form brief. Private GitHub App installations/OAuth, webhooks and check runs, distributed Celery workers, dependency advisory scanning, transformer fine-tuning, and advanced commit comparison are not implemented. The UI explicitly labels unavailable capabilities. No model accuracy, test coverage, scan metrics, or successful integrations are fabricated.
 
 See [ARCHITECTURE.md](ARCHITECTURE.md), [SECURITY.md](SECURITY.md), [ML_REPORT.md](ML_REPORT.md), [TEST_REPORT.md](TEST_REPORT.md), and [ml/README.md](ml/README.md).

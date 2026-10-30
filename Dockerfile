@@ -11,9 +11,12 @@ FROM python:3.12-slim
 WORKDIR /app
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
 COPY requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt && useradd -m appuser
+COPY ml/requirements.txt ./ml-requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt -r ml-requirements.txt && useradd -m appuser
 COPY backend ./backend
+COPY artifacts/baseline.joblib ./artifacts/baseline.joblib
 COPY --from=frontend /app/out ./out
+ENV MODEL_PATH=/app/artifacts/baseline.joblib
 RUN chown -R appuser:appuser /app
 USER appuser
 EXPOSE 10000

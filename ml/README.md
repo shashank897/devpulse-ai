@@ -5,7 +5,7 @@ This is a real trainable scikit-learn TF-IDF + logistic-regression pipeline, not
 The project has a preparation helper for the official CodeXGLUE parquet export. Obtain its C-UDA data-use terms and source files from [the dataset card](https://huggingface.co/datasets/google/code_x_glue_cc_defect_detection) before training. The downloaded files are intentionally not committed.
 
 ```powershell
-pip install -r ml/requirements.txt
+pip install -r ml/requirements.txt -r ml/requirements-data.txt
 New-Item -ItemType Directory -Force data | Out-Null
 Invoke-WebRequest 'https://huggingface.co/datasets/google/code_x_glue_cc_defect_detection/resolve/main/data/train-00000-of-00001.parquet' -OutFile data/train.parquet
 Invoke-WebRequest 'https://huggingface.co/datasets/google/code_x_glue_cc_defect_detection/resolve/main/data/validation-00000-of-00001.parquet' -OutFile data/validation.parquet
