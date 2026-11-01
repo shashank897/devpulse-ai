@@ -22,7 +22,7 @@ const questions=[
   ['What does a low risk score mean?','It means the enabled rules found fewer weighted patterns in the inspected source. The score is a prioritization signal. Rules can miss issues or produce false positives, and partial scans cover only the files or cells shown.'],
   ['Which repositories can I scan?','Public GitHub repositories, including Python notebooks. You can also paste Python, JavaScript, TypeScript, C, or C++ snippets. Private repository sign-in and Bitbucket imports are not available.'],
   ['Why might my scan be partial?','The preview inspects up to 20 source files or notebook cells, 100 KB per source, and 1 MB of source in total. Repository downloads are limited to 8 MB and notebook files to 2 MB. The report explains any skipped content.'],
-  ['Are the AI and ML results automatic?','Static rules power repository scans. The experimental C/C++ classifier is a separate tool in Code DNA, with its evaluation limits displayed. Optional cloud explanations require your consent; only generic rule guidance is shared.'],
+  ['Are the AI and ML results automatic?','Static rules power repository scans. The experimental C/C++ classifier is a separate tool in Files & ML, with its evaluation limits displayed. Optional cloud explanations require your consent; only generic rule guidance is shared.'],
   ['Can I keep my results?','Yes. Scan history is stored in PostgreSQL and belongs to this browser session. Keep the session cookie to access it, or export JSON and SARIF reports. Your scans are not a public feed. Database retention still depends on the hosting plan.'],
 ];
 

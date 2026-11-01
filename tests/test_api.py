@@ -1,9 +1,20 @@
 import os
 import tempfile
 import time
+import pytest
+from concurrent.futures import ThreadPoolExecutor
 os.environ['DATABASE_URL']='sqlite:///'+os.path.join(tempfile.mkdtemp(),'test.db').replace('\\','/')
 from fastapi.testclient import TestClient
 from backend.main import app
+
+@pytest.fixture(autouse=True)
+def fresh_worker(monkeypatch):
+    # Each TestClient lifespan shuts down its worker, so each test gets its own.
+    from backend import main
+    worker=ThreadPoolExecutor(max_workers=1)
+    monkeypatch.setattr(main,'executor',worker)
+    yield
+    worker.shutdown(wait=True)
 
 def wait_scan(client, scan_id):
     for _ in range(100):
@@ -49,3 +60,36 @@ def test_trained_ml_endpoint(monkeypatch):
         assert body['prediction'] in ('low_defect_signal','elevated_defect_signal')
         assert client.post('/api/v1/ml/predict',json={'language':'python','code':'print(1)'}).status_code==422
     load_model.cache_clear()
+
+
+def test_delete_one_scan_is_owned_and_preserves_other_history():
+    with TestClient(app) as client:
+        first=client.post('/api/v1/scans',json={'code':'eval(user)','language':'python'}).json()['id']
+        second=client.post('/api/v1/scans',json={'code':'print(1)','language':'python'}).json()['id']
+        assert wait_scan(client,first)['status']=='completed'
+        assert wait_scan(client,second)['status']=='completed'
+        outsider=TestClient(app)
+        assert outsider.delete('/api/v1/scans/'+first).status_code==404
+        assert client.delete('/api/v1/scans/'+first).status_code==200
+        assert client.get('/api/v1/scans/'+first).status_code==404
+        assert client.get('/api/v1/scans/'+second).status_code==200
+        assert client.delete('/api/v1/scans/'+first).status_code==404
+
+
+def test_active_scan_cannot_be_deleted_and_failure_keeps_repository(monkeypatch):
+    from backend import main
+    jobs=[]
+    monkeypatch.setattr(main.executor,'submit',lambda *args: jobs.append(args))
+    with TestClient(app) as client:
+        response=client.post('/api/v1/scans',json={'repository':'owner/repo'})
+        scan_id=response.json()['id']
+        assert client.delete('/api/v1/scans/'+scan_id).status_code==409
+        assert client.get('/api/v1/scans/'+scan_id).json()['repository']=='owner/repo'
+        def failure(_):
+            raise ValueError('Repository download failed')
+        monkeypatch.setattr(main,'repository_files',failure)
+        fn,*args=jobs.pop()
+        fn(*args)
+        failed=client.get('/api/v1/scans/'+scan_id).json()
+        assert failed['status']=='failed' and failed['repository']=='owner/repo'
+        assert client.delete('/api/v1/scans/'+scan_id).status_code==200

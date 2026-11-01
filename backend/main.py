@@ -101,7 +101,7 @@ def run_scan(scan_id, data):
         message = str(exc) if isinstance(exc,ValueError) else 'The scan could not complete. The upstream service may be unavailable; retry with a smaller snippet.'
         with Session.begin() as db:
             row=db.get(Scan,scan_id)
-            if row: row.status='failed'; row.payload=json.dumps({'error':message})
+            if row: row.status='failed'; row.payload=json.dumps({'error':message,'repository':data.repository})
     finally: capacity.release()
 
 @app.get('/api/v1/health')
@@ -126,13 +126,21 @@ def create_scan(data:ScanInput,request:Request):
     if not capacity.acquire(blocking=False): raise HTTPException(429,'The scan queue is full. Try again shortly.')
     scan_id=str(uuid.uuid4())
     try:
-        with Session.begin() as db: db.add(Scan(id=scan_id,owner=request.state.owner,name=data.repository or data.name,status='queued',payload='{}'))
+        with Session.begin() as db: db.add(Scan(id=scan_id,owner=request.state.owner,name=data.repository or data.name,status='queued',payload=json.dumps({'repository':data.repository})))
         executor.submit(run_scan,scan_id,data)
     except Exception: capacity.release(); raise
     return {'id':scan_id,'status':'queued'}
 @app.get('/api/v1/scans/{scan_id}')
 def get_scan(scan_id:str,request:Request):
     with Session() as db: return serialized(owned(db,scan_id,request.state.owner))
+@app.delete('/api/v1/scans/{scan_id}')
+def delete_scan(scan_id:str,request:Request):
+    with Session.begin() as db:
+        row=owned(db,scan_id,request.state.owner)
+        if row.status in ('queued','running'):
+            raise HTTPException(409,'Wait for this scan to finish before deleting it.')
+        db.delete(row)
+    return {'deleted':True}
 @app.patch('/api/v1/scans/{scan_id}/findings/{finding_id}')
 def triage(scan_id:str,finding_id:str,data:FindingUpdate,request:Request):
     with Session.begin() as db:
