@@ -42,7 +42,9 @@ def test_trained_ml_endpoint(monkeypatch):
         result=client.post('/api/v1/ml/predict',json={'language':'c','code':'int f(char *p) { return p[0]; }'})
         assert result.status_code==200
         body=result.json()
-        assert body['model_name']=='devpulse-defect-baseline'
+        assert body['model_name']=='devpulse-extra_trees'
+        assert body['model_version']=='3.0.0'
+        assert abs(body['threshold']-0.5042610664824371)<1e-10
         assert body['calibrated_probability'] is None
         assert body['prediction'] in ('low_defect_signal','elevated_defect_signal')
         assert client.post('/api/v1/ml/predict',json={'language':'python','code':'print(1)'}).status_code==422

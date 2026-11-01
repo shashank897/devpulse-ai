@@ -1,0 +1,386 @@
+{
+  "selection": {
+    "seed": 42,
+    "train_project": "FFmpeg",
+    "test_project": "qemu",
+    "inner_samples": 7195,
+    "validation_samples": 2471,
+    "inner_commits": 4410,
+    "validation_commits": 1471,
+    "parquet_sha256": {
+      "train": "e319c83e2e816a10aeeebe78668aa95b757b04e555700bf5f826766b0e80bb06",
+      "validation": "a17a76ed040d7f8657d1ff741f967b44704c008101ac958e2990ad468203cfa4",
+      "test": "259c944eb4f8689e83895de476a00fe4cadf4839636769e725d3744fc36cfcd5"
+    },
+    "validation_baseline": {
+      "accuracy": 0.5317685147713477,
+      "precision": 0.5613472333600642,
+      "recall": 0.5343511450381679,
+      "f1": 0.5475166210402815,
+      "roc_auc": 0.5539374453452209,
+      "pr_auc": 0.5854062009651295,
+      "confusion_matrix": [
+        [
+          614,
+          547
+        ],
+        [
+          610,
+          700
+        ]
+      ]
+    },
+    "selection_rule": "Maximize minimum of six metric deltas versus inner-fit baseline; mean delta breaks ties. Thresholds: 101 validation score quantiles plus 0.5.",
+    "features": "character TF-IDF 3-5 grams, 50000 features; same as baseline",
+    "fixed_parameters": {
+      "n_estimators": 160,
+      "min_samples_leaf": 2,
+      "max_features": "sqrt",
+      "class_weight": "balanced",
+      "n_jobs": 2
+    },
+    "candidates": [
+      {
+        "family": "random_forest",
+        "max_depth": 16,
+        "threshold": 0.500595052127181,
+        "validation": {
+          "accuracy": 0.5305544314042897,
+          "precision": 0.5572519083969466,
+          "recall": 0.5572519083969466,
+          "f1": 0.5572519083969466,
+          "roc_auc": 0.5649463150350778,
+          "pr_auc": 0.6310522237421241,
+          "confusion_matrix": [
+            [
+              581,
+              580
+            ],
+            [
+              580,
+              730
+            ]
+          ]
+        },
+        "fit_and_selection_seconds": 9.577487000002293
+      },
+      {
+        "family": "random_forest",
+        "max_depth": 32,
+        "threshold": 0.48769676624740604,
+        "validation": {
+          "accuracy": 0.5176042088223392,
+          "precision": 0.5426300578034682,
+          "recall": 0.5732824427480916,
+          "f1": 0.5575352635486266,
+          "roc_auc": 0.5348847071818845,
+          "pr_auc": 0.5948337750150496,
+          "confusion_matrix": [
+            [
+              528,
+              633
+            ],
+            [
+              559,
+              751
+            ]
+          ]
+        },
+        "fit_and_selection_seconds": 18.271928000001935
+      },
+      {
+        "family": "random_forest",
+        "max_depth": 48,
+        "threshold": 0.12013062988966627,
+        "validation": {
+          "accuracy": 0.537029542695265,
+          "precision": 0.5339329517579722,
+          "recall": 0.9969465648854962,
+          "f1": 0.6954206602768903,
+          "roc_auc": 0.5250856395184462,
+          "pr_auc": 0.574659576422317,
+          "confusion_matrix": [
+            [
+              21,
+              1140
+            ],
+            [
+              4,
+              1306
+            ]
+          ]
+        },
+        "fit_and_selection_seconds": 25.231969599990407
+      },
+      {
+        "family": "extra_trees",
+        "max_depth": 16,
+        "threshold": 0.5042610664824371,
+        "validation": {
+          "accuracy": 0.5200323755564549,
+          "precision": 0.5440340909090909,
+          "recall": 0.5847328244274809,
+          "f1": 0.5636497424576895,
+          "roc_auc": 0.5364337797765811,
+          "pr_auc": 0.5899599065001366,
+          "confusion_matrix": [
+            [
+              519,
+              642
+            ],
+            [
+              544,
+              766
+            ]
+          ]
+        },
+        "fit_and_selection_seconds": 6.467302100005327
+      },
+      {
+        "family": "extra_trees",
+        "max_depth": 32,
+        "threshold": 0.2155086940428628,
+        "validation": {
+          "accuracy": 0.5430999595305545,
+          "precision": 0.5373812474184222,
+          "recall": 0.9931297709923664,
+          "f1": 0.697400160814795,
+          "roc_auc": 0.5060072588121585,
+          "pr_auc": 0.5606350916037983,
+          "confusion_matrix": [
+            [
+              41,
+              1120
+            ],
+            [
+              9,
+              1301
+            ]
+          ]
+        },
+        "fit_and_selection_seconds": 15.955373200005852
+      },
+      {
+        "family": "extra_trees",
+        "max_depth": 48,
+        "threshold": 0.07881889159433376,
+        "validation": {
+          "accuracy": 0.537029542695265,
+          "precision": 0.5339329517579722,
+          "recall": 0.9969465648854962,
+          "f1": 0.6954206602768903,
+          "roc_auc": 0.49050568409702083,
+          "pr_auc": 0.5423951038331247,
+          "confusion_matrix": [
+            [
+              21,
+              1140
+            ],
+            [
+              4,
+              1306
+            ]
+          ]
+        },
+        "fit_and_selection_seconds": 25.425473499999498
+      }
+    ],
+    "selected": {
+      "random_forest": {
+        "family": "random_forest",
+        "max_depth": 16,
+        "threshold": 0.500595052127181,
+        "validation": {
+          "accuracy": 0.5305544314042897,
+          "precision": 0.5572519083969466,
+          "recall": 0.5572519083969466,
+          "f1": 0.5572519083969466,
+          "roc_auc": 0.5649463150350778,
+          "pr_auc": 0.6310522237421241,
+          "confusion_matrix": [
+            [
+              581,
+              580
+            ],
+            [
+              580,
+              730
+            ]
+          ]
+        },
+        "fit_and_selection_seconds": 9.577487000002293
+      },
+      "extra_trees": {
+        "family": "extra_trees",
+        "max_depth": 16,
+        "threshold": 0.5042610664824371,
+        "validation": {
+          "accuracy": 0.5200323755564549,
+          "precision": 0.5440340909090909,
+          "recall": 0.5847328244274809,
+          "f1": 0.5636497424576895,
+          "roc_auc": 0.5364337797765811,
+          "pr_auc": 0.5899599065001366,
+          "confusion_matrix": [
+            [
+              519,
+              642
+            ],
+            [
+              544,
+              766
+            ]
+          ]
+        },
+        "fit_and_selection_seconds": 6.467302100005327
+      }
+    },
+    "environment": {
+      "python": "3.14.0",
+      "packages": {
+        "scikit-learn": "1.9.1",
+        "numpy": "2.5.4",
+        "joblib": "1.6.0",
+        "pyarrow": "26.0.0"
+      }
+    }
+  },
+  "baseline": {
+    "model": "devpulse-defect-baseline",
+    "version": "1.0.0",
+    "languages": [
+      "c",
+      "cpp"
+    ],
+    "seed": 42,
+    "train_projects": [
+      "FFmpeg"
+    ],
+    "test_projects": [
+      "qemu"
+    ],
+    "train_samples": 9666,
+    "test_samples": 17497,
+    "exact_duplicates_removed": 155,
+    "ambiguous_duplicate_groups_dropped": 76,
+    "accuracy": 0.56609704520775,
+    "precision": 0.48567335243553006,
+    "recall": 0.31843800322061194,
+    "f1": 0.38466526179283517,
+    "roc_auc": 0.5480532384195971,
+    "pr_auc": 0.47239093909074015,
+    "confusion_matrix": [
+      [
+        7532,
+        2513
+      ],
+      [
+        5079,
+        2373
+      ]
+    ],
+    "ms_per_function": 2.120812962222091,
+    "functions_per_second": 471.51729917391947,
+    "calibrated": false,
+    "threshold": 0.5,
+    "dataset_sha256": "8e4f0c64784d38e4c39eb731d11a8e297669c4175d17146f2e507bd56194485c",
+    "artifact_bytes": 2113511
+  },
+  "models": {
+    "random_forest": {
+      "model": "devpulse-random_forest",
+      "version": "3.0.0",
+      "languages": [
+        "c",
+        "cpp"
+      ],
+      "train_samples": 9666,
+      "test_samples": 17497,
+      "train_projects": [
+        "FFmpeg"
+      ],
+      "test_projects": [
+        "qemu"
+      ],
+      "calibrated": false,
+      "threshold": 0.500595052127181,
+      "final_classifier_fit_seconds": 10.895444199995836,
+      "accuracy": 0.6174772818197405,
+      "precision": 0.6030969845150774,
+      "recall": 0.29790660225442833,
+      "f1": 0.3988143357585556,
+      "roc_auc": 0.5966457102459224,
+      "pr_auc": 0.5908851302757485,
+      "confusion_matrix": [
+        [
+          8584,
+          1461
+        ],
+        [
+          5232,
+          2220
+        ]
+      ],
+      "ms_per_function": 1.964804983711225,
+      "functions_per_second": 508.95636375634,
+      "baseline_delta": {
+        "accuracy": 0.05138023661199054,
+        "precision": 0.11742363207954737,
+        "recall": -0.02053140096618361,
+        "f1": 0.01414907396572046,
+        "roc_auc": 0.04859247182632531,
+        "pr_auc": 0.11849419118500837
+      },
+      "all_quality_metrics_improved": false,
+      "artifact_bytes": 1908518
+    },
+    "extra_trees": {
+      "model": "devpulse-extra_trees",
+      "version": "3.0.0",
+      "languages": [
+        "c",
+        "cpp"
+      ],
+      "train_samples": 9666,
+      "test_samples": 17497,
+      "train_projects": [
+        "FFmpeg"
+      ],
+      "test_projects": [
+        "qemu"
+      ],
+      "calibrated": false,
+      "threshold": 0.5042610664824371,
+      "final_classifier_fit_seconds": 6.018104000002495,
+      "accuracy": 0.5798708350002858,
+      "precision": 0.5108067622512305,
+      "recall": 0.3203166935050993,
+      "f1": 0.3937319587628866,
+      "roc_auc": 0.5620291618473712,
+      "pr_auc": 0.509511814130833,
+      "confusion_matrix": [
+        [
+          7759,
+          2286
+        ],
+        [
+          5065,
+          2387
+        ]
+      ],
+      "ms_per_function": 2.118254375035957,
+      "functions_per_second": 472.086833283668,
+      "baseline_delta": {
+        "accuracy": 0.013773789792535851,
+        "precision": 0.02513340981570039,
+        "recall": 0.0018786902844873388,
+        "f1": 0.009066696970051413,
+        "roc_auc": 0.013975923427774095,
+        "pr_auc": 0.03712087504009287
+      },
+      "all_quality_metrics_improved": true,
+      "artifact_bytes": 2069797
+    }
+  },
+  "limitation": "Historical QEMU results are already known. This is a development comparison, not a fresh independent benchmark. Timing is local and uncontrolled; scores are uncalibrated."
+}

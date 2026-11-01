@@ -1,5 +1,7 @@
 # Machine learning report
 
+Current packaged model: **Extra Trees v3.0.0**, promoted on 2026-11-01. See the final section for its comparison with the original logistic-regression baseline and Random Forest. Earlier sections describe historical experiments.
+
 Implemented: character TF-IDF (3–5 grams, 50,000 features), class-balanced logistic regression, fixed random seed, exact duplicate removal, project-disjoint holdout, artifact versioning and dataset checksum. Metrics are computed only after training on supplied data.
 
 ## Training run (2026-10-30)
@@ -46,3 +48,26 @@ Validation PR-AUC selected the character model with C = 0.1. Its threshold 0.480
 The candidate artifact is saved locally as `artifacts/experiment-v2/candidate.joblib` (2,113,451 bytes). Measured inference took 1.9669 ms/function, approximately 508 functions/second; this is an uncontrolled local timing and does not establish a speed improvement over the earlier run. Scores remain uncalibrated. The API now reads an artifact's threshold metadata, with 0.5 as the legacy default; 18 backend tests passed, including checks for threshold handling and baseline inference.
 
 Reproduce using `python ml/train_improved.py`; the source dataset files must be present. Input parquet checksums, package versions, every validation result and final test metrics are recorded in [ml/experiments/devign-v2.json](ml/experiments/devign-v2.json). See [DATASETS.md](DATASETS.md) for verified dataset sources and downloads. The current dataset is already available locally. PrimeVul is a candidate for broader future training with chronological evaluation; it was not downloaded or used in this experiment. Transformer training has not been performed.
+
+## Two additional models (2026-11-01)
+
+Trained Random Forest and Extra Trees with 160 trees, balanced class weights, character TF-IDF (3–5 grams, 50,000 features), seed 42 and two workers. Both selected depth 16 from depths 16, 32 and 48. Model settings and thresholds were selected on 2,471 FFmpeg validation examples, with commits disjoint from the 7,195 inner-training examples. Selection maximized the worst of six metric differences from an inner-fit logistic-regression reference, with average difference breaking ties. All settings were locked before evaluation on the historical 17,497-example QEMU holdout. Final models used all 9,666 FFmpeg examples.
+
+| Metric | Original logistic regression | Random Forest | Extra Trees (promoted) |
+| --- | ---: | ---: | ---: |
+| Accuracy | 56.61% | 61.75% | 57.99% |
+| Precision | 48.57% | 60.31% | 51.08% |
+| Recall | 31.84% | 29.79% | 32.03% |
+| F1 | 38.47% | 39.88% | 39.37% |
+| ROC-AUC | 0.5481 | 0.5966 | 0.5620 |
+| PR-AUC | 0.4724 | 0.5909 | 0.5095 |
+
+Extra Trees improved all six quality point estimates; these small gains have not been shown statistically significant. Random Forest improved five but reduced recall. The historical QEMU results were already known, so this is a development comparison rather than an independent benchmark. Neither model is a reliable security detector; scores remain uncalibrated.
+
+Random Forest: threshold 0.5005950521; confusion matrix [[8584, 1461], [5232, 2220]]; compressed artifact 1,908,518 bytes; local inference 1.9648 ms/function (509.0 functions/second).
+
+Extra Trees: threshold 0.5042610665; confusion matrix [[7759, 2286], [5065, 2387]]; compressed artifact 2,069,797 bytes; local inference 2.1183 ms/function (472.1 functions/second).
+
+Timing is an uncontrolled local batch measurement, not a demonstrated speed improvement. Only the six quality metrics improved together. Extra Trees is packaged at the existing `artifacts/baseline.joblib` path to preserve deployment configuration. Historical baseline evaluation remains unchanged for reproducible comparisons. Both candidate artifacts remain under `artifacts/experiment-v3/`.
+
+Reproduce with `python ml/train_trees.py --output artifacts/new-experiment`. Full dataset checksums, settings, validation results, environment versions and final metrics: [v3 experiment](ml/experiments/devign-v3.json). Saved artifacts passed a prediction round-trip check. Algorithm references: [Random Forest](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html), [Extra Trees](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.ExtraTreesClassifier.html).
