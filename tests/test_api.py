@@ -44,6 +44,15 @@ def test_scan_session_triage_exports_and_deletion():
         assert client.delete('/api/v1/scans').status_code==200
         assert client.get('/api/v1/scans').json()==[]
 
+def test_code_preview_is_explicit_and_does_not_create_scan_history():
+    source='import sqlite3\nconnection=sqlite3.connect(":memory:")\nquery=f"SELECT * FROM users WHERE name = \'{username}\'"\nconnection.execute(query)'
+    with TestClient(app) as client:
+        result=client.post('/api/v1/optimize-preview',json={'language':'python','category':'security','code':source})
+        assert result.status_code==200
+        assert 'connection.execute(query, query_params)' in result.json()['suggestions'][0]['code']
+        assert client.get('/api/v1/scans').json()==[]
+        assert client.post('/api/v1/optimize-preview',json={'language':'python','category':'security','code':'x'*100001}).status_code==422
+
 def test_trained_ml_endpoint(monkeypatch):
     from pathlib import Path
     from backend.ml import load_model

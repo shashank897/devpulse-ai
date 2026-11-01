@@ -20,6 +20,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from .analyzer import analyze, sarif
 from .db import engine, Session, Scan, url, initialize_database
 from .github import repository_files
+from .optimizer import preview as optimizer_preview
 
 executor = ThreadPoolExecutor(max_workers=1)
 capacity = threading.BoundedSemaphore(3)
@@ -65,6 +66,10 @@ class ExplainInput(BaseModel):
     scan_id: str
     finding_id: str
     consent: bool = False
+class OptimizeInput(BaseModel):
+    language: Literal['python','javascript','typescript','c','cpp'] = 'python'
+    code: str = Field(min_length=1, max_length=100_000)
+    category: Literal['security','performance']
 
 def serialized(row):
     return {'id':row.id,'name':row.name,'status':row.status,'created_at':row.created_at.isoformat()+'Z', **json.loads(row.payload)}
@@ -183,6 +188,13 @@ async def explain(data:ExplainInput,request:Request):
             return {'source':'ai-suggestion','explanation':answer[:6000],'notice':'AI suggestion; verify before applying.'}
         except (httpx.HTTPError,KeyError,IndexError,ValueError):
             return {'source':'rule-guidance','explanation':finding['suggestion'],'notice':'Free AI capacity is unavailable. Showing rule guidance.'}
+@app.post('/api/v1/optimize-preview')
+def optimize_preview(data:OptimizeInput):
+    """Return a conservative source edit for review. Does not execute or persist submitted code."""
+    try:
+        return optimizer_preview(data.code, data.language, data.category)
+    except ValueError as exc:
+        raise HTTPException(413 if '100 KB' in str(exc) else 422, str(exc))
 @app.post('/api/v1/ml/predict')
 def predict(data:ScanInput,request:Request):
     limit(request)

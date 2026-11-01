@@ -18,6 +18,7 @@ DevPulse AI is an evidence-first code-analysis preview. It combines a responsive
 - Credential-shaped literals generate a finding with the source evidence redacted.
 - Findings show a rule ID, severity, file path, line number, bounded evidence, an explanation, and suggested remediation.
 - Syntax errors and partial repository scans are reported as warnings instead of being presented as a clean result.
+- Offers separate, opt-in Python security and performance previews in the snippet editor. The security preview parameterizes narrowly matched SQLite f-strings; the performance preview suggests `enumerate` for a simple indexed loop. Both display the current and suggested code side by side and require an explicit apply action. Unsupported cases get no automatic edit; previews are not executed or stored, and performance edits must be benchmarked.
 
 These rules are deliberately limited. Pattern checks can produce false positives or miss problems; they do not provide a security guarantee.
 
